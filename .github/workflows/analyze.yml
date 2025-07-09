@@ -24,7 +24,7 @@ jobs:
 
       - name: Analyze code with OpenAI
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_CODEX_KEY }}
         run: |
           for file in $(git diff --name-only origin/main); do
             if [[ $file == *.js || $file == *.jsx || $file == *.tsx ]]; then

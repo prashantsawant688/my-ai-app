@@ -1,0 +1,34 @@
+name: AI Code Review
+
+on:
+  pull_request:
+    paths:
+      - '**.js'
+      - '**.tsx'
+      - '**.jsx'
+
+jobs:
+  ai_review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Analyze code with OpenAI
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          for file in $(git diff --name-only origin/main); do
+            if [[ $file == *.js || $file == *.jsx || $file == *.tsx ]]; then
+              echo "Reviewing $file"
+              node analyze.js "$file"
+            fi
+          done

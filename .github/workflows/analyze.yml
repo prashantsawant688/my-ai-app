@@ -12,9 +12,15 @@ on:
 jobs:
   review:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # ✅ Required to access full history (e.g., main branch)
+
+      - name: Fetch main branch explicitly
+        run: git fetch origin main # ✅ Ensures origin/main exists for git diff
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -30,7 +36,7 @@ jobs:
       - name: Run OpenAI PR Review
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_CODEX_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # default token available automatically
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: node analyze.mjs
